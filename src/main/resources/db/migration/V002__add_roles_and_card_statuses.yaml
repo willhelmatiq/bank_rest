@@ -1,0 +1,31 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 2
+      author: willhelmatiq
+      changes:
+
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: title, value: ADMIN }
+
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: title, value: USER }
+
+        - insert:
+            tableName: card_statuses
+            columns:
+              - column: { name: status_code, value: ACTIVE }
+
+        - insert:
+            tableName: card_statuses
+            columns:
+              - column: { name: status_code, value: BLOCKED }
+
+        - insert:
+            tableName: card_statuses
+            columns:
+              - column: { name: status_code, value: EXPIRED }

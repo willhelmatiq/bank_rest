@@ -6,3 +6,41 @@
   - Указать порт приложения.
   - Настроить параметры безопасности и JWT.
   - Включить Swagger UI.
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bank-rest
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:default}
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/migration/db.changelog-master.yaml
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 3600000
