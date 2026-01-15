@@ -31,7 +31,7 @@ public class TransferService {
             TransferRequestDto request,
             Authentication authentication
     ) {
-        String username = authentication.getName();
+        String username = getUsername(authentication);
 
         if (request.fromCardId().equals(request.toCardId())) {
             throw new BusinessException("Cannot transfer money to the same card");
@@ -60,7 +60,7 @@ public class TransferService {
     }
 
     public List<TransferResponseDto> getUserTransfers(Authentication authentication) {
-        String username = authentication.getName();
+        String username = getUsername(authentication);
 
         return transferRepository
                 .findAllByUser(username)
@@ -91,5 +91,9 @@ public class TransferService {
                 transfer.getCreatedAt(),
                 outgoing ? OUTGOING : INCOMING
         );
+    }
+
+    private String getUsername(Authentication auth) {
+        return auth.getName();
     }
 }
