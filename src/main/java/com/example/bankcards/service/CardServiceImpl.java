@@ -79,6 +79,8 @@ public class CardServiceImpl implements CardService{
         return new CardResponseDto(
                 card.getId(),
                 card.getMaskedNumber(),
+                card.getOwnerName(),
+                card.getExpirationDate(),
                 card.getStatus().getStatusCode(),
                 card.getBalance()
         );
