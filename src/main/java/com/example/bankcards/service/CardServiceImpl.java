@@ -3,9 +3,11 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.BalanceResponseDto;
 import com.example.bankcards.dto.CardResponseDto;
 import com.example.bankcards.entity.Card;
+import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.enums.CardStatusCode;
 import com.example.bankcards.exception.BusinessException;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.repository.CardStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CardServiceImpl implements CardService{
 
     private final CardRepository cardRepository;
+    private final CardStatusRepository cardStatusRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -59,7 +62,11 @@ public class CardServiceImpl implements CardService{
             throw new BusinessException("Expired card cannot be blocked");
         }
 
-        card.getStatus().setStatusCode(CardStatusCode.BLOCKED);
+        CardStatus blockedStatus = cardStatusRepository
+                .findByStatusCode(CardStatusCode.BLOCKED)
+                .orElseThrow(() -> new IllegalStateException("BLOCKED status not found"));
+
+        card.setStatus(blockedStatus);
     }
 
     private Card getUserCard(Long cardId, Authentication authentication) {
