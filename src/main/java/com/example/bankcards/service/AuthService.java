@@ -5,6 +5,7 @@ import com.example.bankcards.dto.LoginRequestDto;
 import com.example.bankcards.exception.BusinessException;
 import com.example.bankcards.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -32,10 +33,10 @@ public class AuthService {
             return new JwtResponseDto(token);
 
         } catch (DisabledException ex) {
-            throw new BusinessException("User has been blocked");
+            throw new BusinessException("User has been blocked", HttpStatus.FORBIDDEN);
 
         } catch (BadCredentialsException ex) {
-            throw new BusinessException("Invalid username or password");
+            throw new BusinessException("Invalid username or password", HttpStatus.UNAUTHORIZED);
         }
     }
 }
