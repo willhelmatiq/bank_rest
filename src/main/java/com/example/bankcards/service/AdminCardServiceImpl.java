@@ -75,7 +75,13 @@ public class AdminCardServiceImpl implements AdminCardService {
     @Override
     @Transactional
     public void delete(Long cardId) {
-        cardRepository.deleteById(cardId);
+        Card card = getCard(cardId);
+
+        CardStatus closedStatus = cardStatusRepository
+                .findByStatusCode(CardStatusCode.CLOSED)
+                .orElseThrow(() -> new IllegalStateException("CLOSED status not found"));
+
+        card.setStatus(closedStatus);
     }
 
     @Override
