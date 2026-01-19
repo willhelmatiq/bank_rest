@@ -41,7 +41,7 @@ public class TransferServiceImpl implements TransferService {
                 .orElseThrow(() -> new BusinessException("Source card not found"));
 
         Card to = cardRepository.findByIdAndUserUsername(request.toCardId(), username)
-                .orElseThrow(() -> new BusinessException("Source card not found"));
+                .orElseThrow(() -> new BusinessException("Target card not found"));
 
         validateCards(from, to, request);
 
