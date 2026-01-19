@@ -29,4 +29,19 @@ public class TestDataFactory {
 
         return card;
     }
+
+    public static User user(long id, String userName) {
+        User user = new User();
+        user.setId(id);
+        user.setUsername(userName);
+
+        return user;
+    }
+
+    public static CardStatus cardStatus(CardStatusCode status) {
+        CardStatus cardStatus = new CardStatus();
+        cardStatus.setStatusCode(status);
+
+        return cardStatus;
+    }
 }
