@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CardServiceImpl implements CardService{
+public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final CardStatusRepository cardStatusRepository;
@@ -38,7 +38,7 @@ public class CardServiceImpl implements CardService{
         }
 
         String username = authentication.getName();
-        Page<Card> cards = cardRepository.findAllByUser_UsernameAndStatus_StatusCode( username, status, pageable );
+        Page<Card> cards = cardRepository.findAllByUser_UsernameAndStatus_StatusCode(username, status, pageable);
         return cards.map(this::mapToDto);
     }
 

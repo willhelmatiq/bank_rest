@@ -49,15 +49,9 @@ class CardServiceImplTest {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("user1");
 
-        Card card1 = TestDataFactory.card(
-                1L, "user1", CardStatusCode.ACTIVE, BigDecimal.TEN
-        );
-        Card card2 = TestDataFactory.card(
-                2L, "user1", CardStatusCode.BLOCKED, BigDecimal.ONE
-        );
-        Card card3 = TestDataFactory.card(
-                3L, "user1", CardStatusCode.CLOSED, BigDecimal.ZERO
-        );
+        Card card1 = TestDataFactory.card(1L, "user1", CardStatusCode.ACTIVE, BigDecimal.TEN);
+        Card card2 = TestDataFactory.card(2L, "user1", CardStatusCode.BLOCKED, BigDecimal.ONE);
+        Card card3 = TestDataFactory.card(3L, "user1", CardStatusCode.CLOSED, BigDecimal.ZERO);
 
         Page<Card> page = new PageImpl<>(
                 List.of(card1, card2),
@@ -109,7 +103,6 @@ class CardServiceImplTest {
     @Test
     void getUserCardsByStatus_closed_throwsException() {
         Authentication auth = mock(Authentication.class);
-        when(auth.getName()).thenReturn("user1");
 
         BusinessException ex = assertThrows(
                 BusinessException.class,
@@ -150,7 +143,7 @@ class CardServiceImplTest {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("user1");
 
-        when(cardRepository.findByIdAndUserUsername(1L, "user1"))
+        when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.empty());
 
         BusinessException ex = assertThrows(
@@ -167,14 +160,12 @@ class CardServiceImplTest {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("user1");
 
-        Card card = TestDataFactory.card(
-                1L, "user1", CardStatusCode.ACTIVE, BigDecimal.TEN
-        );
+        Card card = TestDataFactory.card(1L, "user1", CardStatusCode.ACTIVE, BigDecimal.TEN);
 
         CardStatus blockedStatus = new CardStatus();
         blockedStatus.setStatusCode(CardStatusCode.BLOCKED);
 
-        when(cardRepository.findByIdAndUserUsername(1L, "user1"))
+        when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.of(card));
         when(cardStatusRepository.findByStatusCode(CardStatusCode.BLOCKED))
                 .thenReturn(Optional.of(blockedStatus));
@@ -184,17 +175,73 @@ class CardServiceImplTest {
         assertEquals(CardStatusCode.BLOCKED, card.getStatus().getStatusCode());
     }
 
+    // ---------- REQUEST BLOCK WHEN CARD ALREADY BLOCKED----------
+    @Test
+    void requestBlock_cardAlreadyBlocked_throwsException() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getName()).thenReturn("user1");
+
+        Card card = TestDataFactory.card(
+                1L,
+                "user1",
+                CardStatusCode.BLOCKED,
+                BigDecimal.TEN
+        );
+
+        when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(
+                1L,
+                "user1",
+                CardStatusCode.CLOSED
+        )).thenReturn(Optional.of(card));
+
+        BusinessException ex = assertThrows(
+                BusinessException.class,
+                () -> cardService.requestBlock(1L, auth)
+        );
+
+        assertEquals("Card is already blocked", ex.getMessage());
+        verifyNoInteractions(cardStatusRepository);
+    }
+
+    // ---------- REQUEST BLOCK WHEN CARD WAS EXPIRED----------
+    @Test
+    void requestBlock_expiredCard_throwsException() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getName()).thenReturn("user1");
+
+        Card card = TestDataFactory.card(
+                1L,
+                "user1",
+                CardStatusCode.EXPIRED,
+                BigDecimal.TEN
+        );
+
+        when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(
+                1L,
+                "user1",
+                CardStatusCode.CLOSED
+        )).thenReturn(Optional.of(card));
+
+        BusinessException ex = assertThrows(
+                BusinessException.class,
+                () -> cardService.requestBlock(1L, auth)
+        );
+
+        assertEquals("Expired card cannot be blocked", ex.getMessage());
+
+        // 🔒 Статус не должен искаться
+        verifyNoInteractions(cardStatusRepository);
+    }
+
     // ---------- REQUEST BLOCK WHEN ALREADY BLOCKED----------
     @Test
     void requestBlock_alreadyBlocked() {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("user1");
 
-        Card card = TestDataFactory.card(
-                1L, "user1", CardStatusCode.BLOCKED, BigDecimal.TEN
-        );
+        Card card = TestDataFactory.card(1L, "user1", CardStatusCode.BLOCKED, BigDecimal.TEN);
 
-        when(cardRepository.findByIdAndUserUsername(1L, "user1"))
+        when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.of(card));
 
         BusinessException ex = assertThrows(
@@ -211,11 +258,9 @@ class CardServiceImplTest {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("user1");
 
-        Card card = TestDataFactory.card(
-                1L, "user1", CardStatusCode.EXPIRED, BigDecimal.TEN
-        );
+        Card card = TestDataFactory.card(1L, "user1", CardStatusCode.EXPIRED, BigDecimal.TEN);
 
-        when(cardRepository.findByIdAndUserUsername(1L, "user1"))
+        when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.of(card));
 
         BusinessException ex = assertThrows(
