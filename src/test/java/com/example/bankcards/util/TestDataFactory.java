@@ -2,6 +2,7 @@ package com.example.bankcards.util;
 
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
+import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.enums.CardStatusCode;
 
@@ -30,6 +31,16 @@ public class TestDataFactory {
         return card;
     }
 
+    public static User user(long id, String userName, Role role, boolean enabled) {
+        User user = new User();
+        user.setId(id);
+        user.setUsername(userName);
+        user.setRole(role);
+        user.setEnabled(enabled);
+
+        return user;
+    }
+
     public static User user(long id, String userName) {
         User user = new User();
         user.setId(id);
@@ -43,5 +54,12 @@ public class TestDataFactory {
         cardStatus.setStatusCode(status);
 
         return cardStatus;
+    }
+
+    public static Role role(String roleTitle) {
+        Role role = new Role();
+        role.setTitle(roleTitle);
+
+        return role;
     }
 }
