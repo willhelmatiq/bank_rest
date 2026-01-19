@@ -26,13 +26,17 @@ public class CardServiceImpl implements CardService{
     @Transactional(readOnly = true)
     public Page<CardResponseDto> getUserCards(Authentication authentication, Pageable pageable) {
         String username = authentication.getName();
-        Page<Card> cards = cardRepository.findAllByUserUsername(username, pageable);
+        Page<Card> cards = cardRepository.findAllByUser_UsernameAndStatus_StatusCodeNot(username, CardStatusCode.CLOSED, pageable);
         return cards.map(this::mapToDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<CardResponseDto> getUserCardsByStatus(Authentication authentication, CardStatusCode status, Pageable pageable) {
+        if (status == CardStatusCode.CLOSED) {
+            throw new BusinessException("Closed cards are not accessible for user");
+        }
+
         String username = authentication.getName();
         Page<Card> cards = cardRepository.findAllByUser_UsernameAndStatus_StatusCode( username, status, pageable );
         return cards.map(this::mapToDto);
@@ -71,7 +75,7 @@ public class CardServiceImpl implements CardService{
 
     private Card getUserCard(Long cardId, Authentication authentication) {
         return cardRepository
-                .findByIdAndUserUsername(cardId, authentication.getName())
+                .findByIdAndUser_UsernameAndStatus_StatusCodeNot(cardId, authentication.getName(), CardStatusCode.CLOSED)
                 .orElseThrow(() -> new BusinessException("Card not found"));
     }
 

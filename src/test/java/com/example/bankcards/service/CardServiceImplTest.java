@@ -28,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CardServiceImplTest {
@@ -44,16 +43,20 @@ class CardServiceImplTest {
     CardServiceImpl cardService;
 
 
+    // ---------- GET USER CARDS ----------
     @Test
     void getUserCards_success() {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("user1");
-// ---------- GET USER CARDS ----------
+
         Card card1 = TestDataFactory.card(
                 1L, "user1", CardStatusCode.ACTIVE, BigDecimal.TEN
         );
         Card card2 = TestDataFactory.card(
                 2L, "user1", CardStatusCode.BLOCKED, BigDecimal.ONE
+        );
+        Card card3 = TestDataFactory.card(
+                3L, "user1", CardStatusCode.CLOSED, BigDecimal.ZERO
         );
 
         Page<Card> page = new PageImpl<>(
@@ -62,7 +65,7 @@ class CardServiceImplTest {
                 2
         );
 
-        when(cardRepository.findAllByUserUsername(eq("user1"), any(Pageable.class)))
+        when(cardRepository.findAllByUser_UsernameAndStatus_StatusCodeNot(eq("user1"), eq(CardStatusCode.CLOSED), any(Pageable.class)))
                 .thenReturn(page);
 
         Page<CardResponseDto> result =
@@ -102,6 +105,25 @@ class CardServiceImplTest {
         assertEquals(CardStatusCode.ACTIVE, result.getContent().getFirst().status());
     }
 
+    // ---------- GET USER CARDS BY STATUS CLOSED ----------
+    @Test
+    void getUserCardsByStatus_closed_throwsException() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getName()).thenReturn("user1");
+
+        BusinessException ex = assertThrows(
+                BusinessException.class,
+                () -> cardService.getUserCardsByStatus(
+                        auth,
+                        CardStatusCode.CLOSED,
+                        PageRequest.of(0, 10)
+                )
+        );
+
+        assertEquals("Closed cards are not accessible for user", ex.getMessage());
+        verifyNoInteractions(cardRepository);
+    }
+
     // ---------- GET BALANCE ----------
     @Test
     void getBalance_success() {
@@ -112,7 +134,7 @@ class CardServiceImplTest {
                 1L, "user1", CardStatusCode.ACTIVE, new BigDecimal("123.45")
         );
 
-        when(cardRepository.findByIdAndUserUsername(1L, "user1"))
+        when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.of(card));
 
         BalanceResponseDto response =

@@ -17,6 +17,12 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             Pageable pageable
     );
 
+    Page<Card> findAllByUser_UsernameAndStatus_StatusCodeNot(
+            String username,
+            CardStatusCode status,
+            Pageable pageable
+    );
+
     Page<Card> findAllByUser_UsernameAndStatus_StatusCode(
             String username,
             CardStatusCode status,
@@ -24,4 +30,6 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     );
 
     Optional<Card> findByIdAndUserUsername(Long id, String username);
+
+    Optional<Card> findByIdAndUser_UsernameAndStatus_StatusCodeNot(Long id, String username, CardStatusCode status);
 }
