@@ -7,3 +7,6 @@ databaseChangeLog:
 
   - include:
       file: db/migration/V003__add_user_enabled.yaml
+
+  - include:
+      file: db/migration/V004__add_closed_card_status.yaml
