@@ -38,7 +38,6 @@ spring:
 springdoc:
   swagger-ui:
     enabled: true
-    url: /docs/openapi.yaml
 
 security:
   jwt:
