@@ -1,0 +1,12 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: add-closed-card-status
+      author: willhelmatiq
+      changes:
+        - insert:
+            tableName: card_statuses
+            columns:
+              - column:
+                  name: status_code
+                  value: CLOSED

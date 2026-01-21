@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/V001__init_schema.yaml
+
+  - include:
+      file: db/migration/V002__add_roles_and_card_statuses.yaml
+
+  - include:
+      file: db/migration/V003__add_user_enabled.yaml
+
+  - include:
+      file: db/migration/V004__add_closed_card_status.yaml
