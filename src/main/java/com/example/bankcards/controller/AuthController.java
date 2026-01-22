@@ -10,6 +10,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST-контроллер аутентификации пользователей.
+ *
+ * <p>Предоставляет API для входа пользователя в систему
+ * и получения JWT-токена.</p>
+ *
+ * <p>Контроллер не требует аутентификации и используется
+ * для первичного входа в систему.</p>
+ *
+ * <p>Вся бизнес-логика аутентификации и генерации токена
+ * инкапсулирована в {@link AuthService}.</p>
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

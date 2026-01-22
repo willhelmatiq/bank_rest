@@ -11,6 +11,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST-контроллер для управления переводами между банковскими картами.
+ *
+ * <p>Позволяет авторизованному пользователю:</p>
+ * <ul>
+ *     <li>совершать переводы на карту;</li>
+ *     <li>просматривать историю выполненных переводов.</li>
+ * </ul>
+ *
+ * <p>Доступ разрешён только пользователям с ролью {@code USER}.
+ * Аутентифицированный пользователь определяется через {@link Authentication}.</p>
+ *
+ * <p>Вся бизнес-логика переводов инкапсулирована в {@link TransferService}.</p>
+ */
 @RestController
 @RequestMapping("/api/user/transfers")
 @RequiredArgsConstructor

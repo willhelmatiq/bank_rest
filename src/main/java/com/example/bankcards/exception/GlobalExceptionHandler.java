@@ -13,6 +13,22 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Глобальный обработчик исключений REST API.
+ *
+ * <p>Обеспечивает централизованную обработку ошибок приложения
+ * и формирование унифицированного ответа об ошибке
+ * в формате {@link ErrorResponseDto}.</p>
+ *
+ * <p>Обрабатывает:</p>
+ * <ul>
+ *     <li>бизнес-исключения (400, 403, 404, 409);</li>
+ *     <li>ошибки валидации входных данных;</li>
+ *     <li>непредвиденные ошибки сервера (500).</li>
+ * </ul>
+ *
+ * <p>Используется для всех REST-контроллеров приложения.</p>
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
