@@ -2,10 +2,10 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.JwtResponseDto;
 import com.example.bankcards.dto.LoginRequestDto;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.ForbiddenException;
+import com.example.bankcards.exception.UnauthorizedException;
 import com.example.bankcards.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -33,10 +33,10 @@ public class AuthService {
             return new JwtResponseDto(token);
 
         } catch (DisabledException ex) {
-            throw new BusinessException("User has been blocked", HttpStatus.FORBIDDEN);
+            throw new ForbiddenException("User has been blocked");
 
         } catch (BadCredentialsException ex) {
-            throw new BusinessException("Invalid username or password", HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedException("Invalid username or password");
         }
     }
 }

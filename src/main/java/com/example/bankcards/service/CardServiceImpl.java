@@ -5,7 +5,9 @@ import com.example.bankcards.dto.CardResponseDto;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.enums.CardStatusCode;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.ConflictException;
+import com.example.bankcards.exception.ForbiddenException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.CardStatusRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,7 @@ public class CardServiceImpl implements CardService {
     @Transactional(readOnly = true)
     public Page<CardResponseDto> getUserCardsByStatus(Authentication authentication, CardStatusCode status, Pageable pageable) {
         if (status == CardStatusCode.CLOSED) {
-            throw new BusinessException("Closed cards are not accessible for user");
+            throw new ForbiddenException("Closed cards are not accessible for user");
         }
 
         String username = authentication.getName();
@@ -59,11 +61,11 @@ public class CardServiceImpl implements CardService {
         Card card = getUserCard(cardId, authentication);
 
         if (card.getStatus().getStatusCode() == CardStatusCode.BLOCKED) {
-            throw new BusinessException("Card is already blocked");
+            throw new ConflictException("Card is already blocked");
         }
 
         if (card.getStatus().getStatusCode() == CardStatusCode.EXPIRED) {
-            throw new BusinessException("Expired card cannot be blocked");
+            throw new ConflictException("Expired card cannot be blocked");
         }
 
         CardStatus blockedStatus = cardStatusRepository
@@ -76,7 +78,7 @@ public class CardServiceImpl implements CardService {
     private Card getUserCard(Long cardId, Authentication authentication) {
         return cardRepository
                 .findByIdAndUser_UsernameAndStatus_StatusCodeNot(cardId, authentication.getName(), CardStatusCode.CLOSED)
-                .orElseThrow(() -> new BusinessException("Card not found"));
+                .orElseThrow(() -> new NotFoundException("Card not found"));
     }
 
     private CardResponseDto mapToDto(Card card) {

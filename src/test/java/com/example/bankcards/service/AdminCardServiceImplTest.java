@@ -6,7 +6,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.enums.CardStatusCode;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.CardStatusRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -86,8 +86,8 @@ class AdminCardServiceImplTest {
 
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        NotFoundException ex = assertThrows(
+                NotFoundException.class,
                 () -> adminCardService.create(dto)
         );
 
@@ -117,8 +117,8 @@ class AdminCardServiceImplTest {
     void block_cardNotFound() {
         when(cardRepository.findById(1L)).thenReturn(Optional.empty());
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        NotFoundException ex = assertThrows(
+                NotFoundException.class,
                 () -> adminCardService.block(1L)
         );
 

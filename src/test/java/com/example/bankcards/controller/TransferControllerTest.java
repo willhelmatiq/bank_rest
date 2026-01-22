@@ -3,7 +3,7 @@ package com.example.bankcards.controller;
 import com.example.bankcards.dto.TransferRequestDto;
 import com.example.bankcards.dto.TransferResponseDto;
 import com.example.bankcards.enums.TransferDirection;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.BadRequestException;
 import com.example.bankcards.security.JwtAuthenticationFilter;
 import com.example.bankcards.service.TransferService;
 import org.junit.jupiter.api.Test;
@@ -102,7 +102,7 @@ class TransferControllerTest {
     void transfer_businessException_returns400() throws Exception {
 
         when(transferService.transfer(any(), any()))
-                .thenThrow(new BusinessException("Insufficient balance"));
+                .thenThrow(new BadRequestException("Insufficient balance"));
 
         mockMvc.perform(post("/api/user/transfers")
                         .contentType("application/json")

@@ -7,6 +7,15 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Конфигурация OpenAPI (Swagger) для REST API приложения.
+ *
+ * <p>Настраивает схему аутентификации с использованием JWT Bearer Token,
+ * что позволяет Swagger UI корректно отправлять авторизационный заголовок
+ * {@code Authorization: Bearer <token>} при выполнении защищённых запросов.</p>
+ *
+ * <p>Используется для документирования и тестирования API через Swagger UI.</p>
+ */
 @Configuration
 public class OpenApiConfig {
 

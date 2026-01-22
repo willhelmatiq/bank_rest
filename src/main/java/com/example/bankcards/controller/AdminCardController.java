@@ -10,6 +10,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST-контроллер для административного управления банковскими картами.
+ *
+ * <p>Доступен только пользователям с ролью {@code ADMIN}.</p>
+ *
+ * <p>Предоставляет API для:</p>
+ * <ul>
+ *   <li>создания карт</li>
+ *   <li>блокировки и активации карт</li>
+ *   <li>удаления карт</li>
+ *   <li>просмотра списка карт с пагинацией</li>
+ * </ul>
+ *
+ * <p>Контроллер не содержит бизнес-логики и делегирует все операции
+ * сервисному слою {@link AdminCardService}.</p>
+ */
 @RestController
 @RequestMapping("/api/admin/cards")
 @RequiredArgsConstructor

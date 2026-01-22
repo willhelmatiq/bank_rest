@@ -2,14 +2,14 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.JwtResponseDto;
 import com.example.bankcards.dto.LoginRequestDto;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.ForbiddenException;
+import com.example.bankcards.exception.UnauthorizedException;
 import com.example.bankcards.security.JwtTokenProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -60,15 +60,14 @@ class AuthServiceTest {
         when(authenticationManager.authenticate(any()))
                 .thenThrow(new DisabledException("User disabled"));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ForbiddenException ex = assertThrows(
+                ForbiddenException.class,
                 () -> authService.login(
                         new LoginRequestDto("user1", "password")
                 )
         );
 
         assertEquals("User has been blocked", ex.getMessage());
-        assertEquals(HttpStatus.FORBIDDEN, ex.getStatus());
 
         verify(authenticationManager).authenticate(any());
         verifyNoInteractions(jwtTokenProvider);
@@ -80,15 +79,14 @@ class AuthServiceTest {
         when(authenticationManager.authenticate(any()))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        UnauthorizedException ex = assertThrows(
+                UnauthorizedException.class,
                 () -> authService.login(
                         new LoginRequestDto("user1", "wrong-password")
                 )
         );
 
         assertEquals("Invalid username or password", ex.getMessage());
-        assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatus());
 
         verify(authenticationManager).authenticate(any());
         verifyNoInteractions(jwtTokenProvider);

@@ -1,31 +1,88 @@
 databaseChangeLog:
 
+  # ---------- ROLES SEED ----------
   - changeSet:
-      id: 2
+      id: insert-role-admin
       author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: HALT
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM roles WHERE title = 'ADMIN'"
       changes:
-
         - insert:
             tableName: roles
             columns:
-              - column: { name: title, value: ADMIN }
+              - column:
+                  name: title
+                  value: ADMIN
 
+  - changeSet:
+      id: insert-role-user
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: HALT
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM roles WHERE title = 'USER'"
+      changes:
         - insert:
             tableName: roles
             columns:
-              - column: { name: title, value: USER }
+              - column:
+                  name: title
+                  value: USER
 
+  # ---------- CARD_STATUSES SEED ----------
+  - changeSet:
+      id: insert-card-status-active
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: HALT
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM card_statuses WHERE status_code = 'ACTIVE'"
+      changes:
         - insert:
             tableName: card_statuses
             columns:
-              - column: { name: status_code, value: ACTIVE }
+              - column:
+                  name: status_code
+                  value: ACTIVE
 
+  - changeSet:
+      id: insert-card-status-blocked
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: HALT
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM card_statuses WHERE status_code = 'BLOCKED'"
+      changes:
         - insert:
             tableName: card_statuses
             columns:
-              - column: { name: status_code, value: BLOCKED }
+              - column:
+                  name: status_code
+                  value: BLOCKED
 
+  - changeSet:
+      id: insert-card-status-expired
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: HALT
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM card_statuses WHERE status_code = 'EXPIRED'"
+      changes:
         - insert:
             tableName: card_statuses
             columns:
-              - column: { name: status_code, value: EXPIRED }
+              - column:
+                  name: status_code
+                  value: EXPIRED

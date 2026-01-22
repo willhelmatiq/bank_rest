@@ -11,6 +11,22 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST-контроллер для работы пользователя со своими банковскими картами.
+ *
+ * <p>Позволяет авторизованному пользователю:</p>
+ * <ul>
+ *     <li>просматривать список своих карт с пагинацией;</li>
+ *     <li>фильтровать карты по статусу;</li>
+ *     <li>получать текущий баланс карты;</li>
+ *     <li>инициировать запрос на блокировку карты.</li>
+ * </ul>
+ *
+ * <p>Доступ разрешён только пользователям с ролью {@code USER}.
+ * Пользователь определяется на основе {@link Authentication}.</p>
+ *
+ * <p>Вся бизнес-логика обработки карт вынесена в {@link CardService}.</p>
+ */
 @RestController
 @RequestMapping("/api/user/cards")
 @RequiredArgsConstructor

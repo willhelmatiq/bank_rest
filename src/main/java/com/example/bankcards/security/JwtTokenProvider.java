@@ -13,6 +13,19 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+/**
+ * Компонент для генерации и валидации JWT-токенов.
+ *
+ * <p>Отвечает за:</p>
+ * <ul>
+ *     <li>создание JWT-токена на основе аутентифицированного пользователя;</li>
+ *     <li>проверку валидности токена;</li>
+ *     <li>извлечение имени пользователя из токена.</li>
+ * </ul>
+ *
+ * <p>Токен подписывается симметричным ключом (HMAC),
+ * секрет и время жизни токена задаются через конфигурацию приложения.</p>
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {

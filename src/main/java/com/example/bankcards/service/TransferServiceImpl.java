@@ -5,7 +5,9 @@ import com.example.bankcards.dto.TransferResponseDto;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Transfer;
 import com.example.bankcards.enums.CardStatusCode;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.BadRequestException;
+import com.example.bankcards.exception.ConflictException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.TransferRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +36,14 @@ public class TransferServiceImpl implements TransferService {
         String username = getUsername(authentication);
 
         if (request.fromCardId().equals(request.toCardId())) {
-            throw new BusinessException("Cannot transfer money to the same card");
+            throw new BadRequestException("Cannot transfer money to the same card");
         }
 
         Card from = cardRepository.findByIdAndUserUsername(request.fromCardId(), username)
-                .orElseThrow(() -> new BusinessException("Source card not found"));
+                .orElseThrow(() -> new NotFoundException("Source card not found"));
 
         Card to = cardRepository.findByIdAndUserUsername(request.toCardId(), username)
-                .orElseThrow(() -> new BusinessException("Target card not found"));
+                .orElseThrow(() -> new NotFoundException("Target card not found"));
 
         validateCards(from, to, request);
 
@@ -73,11 +75,11 @@ public class TransferServiceImpl implements TransferService {
     private void validateCards(Card from, Card to, TransferRequestDto request) {
         if (from.getStatus().getStatusCode() != CardStatusCode.ACTIVE ||
                 to.getStatus().getStatusCode() != CardStatusCode.ACTIVE) {
-            throw new BusinessException("Only ACTIVE cards can be used for transfer");
+            throw new ConflictException("Only ACTIVE cards can be used for transfer");
         }
 
         if (from.getBalance().compareTo(request.amount()) < 0) {
-            throw new BusinessException("Insufficient balance");
+            throw new ConflictException("Insufficient balance");
         }
     }
 
