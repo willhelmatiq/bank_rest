@@ -1,10 +1,16 @@
 databaseChangeLog:
 
   - changeSet:
-      id: add-users-enabled
+      id: add-users-enabled-column
       author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: HALT
+        - not:
+            columnExists:
+              tableName: users
+              columnName: enabled
       changes:
-
         - addColumn:
             tableName: users
             columns:
@@ -12,5 +18,3 @@ databaseChangeLog:
                   name: enabled
                   type: BOOLEAN
                   defaultValueBoolean: true
-                  constraints:
-                    nullable: false

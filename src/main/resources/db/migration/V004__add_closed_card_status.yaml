@@ -1,8 +1,14 @@
 databaseChangeLog:
 
   - changeSet:
-      id: add-closed-card-status
+      id: insert-card-status-closed
       author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: HALT
+        - sqlCheck:
+            expectedResult: "0"
+            sql: "SELECT COUNT(*) FROM card_statuses WHERE status_code = 'CLOSED'"
       changes:
         - insert:
             tableName: card_statuses

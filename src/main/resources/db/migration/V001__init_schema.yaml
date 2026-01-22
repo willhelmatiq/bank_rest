@@ -1,11 +1,15 @@
 databaseChangeLog:
 
+  # ---------- ROLES ----------
   - changeSet:
-      id: 1
+      id: create-roles-table
       author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: roles
       changes:
-
-        # ---------- ROLES ----------
         - createTable:
             tableName: roles
             columns:
@@ -21,7 +25,16 @@ databaseChangeLog:
                     nullable: false
                     unique: true
 
-        # ---------- CARD STATUSES ----------
+  # ---------- CARD STATUSES ----------
+  - changeSet:
+      id: create-card-statuses-table
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: card_statuses
+      changes:
         - createTable:
             tableName: card_statuses
             columns:
@@ -37,7 +50,16 @@ databaseChangeLog:
                     nullable: false
                     unique: true
 
-        # ---------- USERS ----------
+  # ---------- USERS ----------
+  - changeSet:
+      id: create-users-table
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: users
+      changes:
         - createTable:
             tableName: users
             columns:
@@ -63,6 +85,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+  - changeSet:
+      id: fk-users-role
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_users_role
+      changes:
         - addForeignKeyConstraint:
             baseTableName: users
             baseColumnNames: role_id
@@ -70,7 +101,16 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_users_role
 
-        # ---------- CARDS ----------
+  # ---------- CARDS ----------
+  - changeSet:
+      id: create-cards-table
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: cards
+      changes:
         - createTable:
             tableName: cards
             columns:
@@ -116,6 +156,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+  - changeSet:
+      id: fk-cards-status
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_cards_status
+      changes:
         - addForeignKeyConstraint:
             baseTableName: cards
             baseColumnNames: status_id
@@ -123,6 +172,15 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_cards_status
 
+  - changeSet:
+      id: fk-cards-user
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_cards_user
+      changes:
         - addForeignKeyConstraint:
             baseTableName: cards
             baseColumnNames: user_id
@@ -130,7 +188,16 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_cards_user
 
-        # ---------- TRANSFERS ----------
+  # ---------- TRANSFERS ----------
+  - changeSet:
+      id: create-transfers-table
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: transfers
+      changes:
         - createTable:
             tableName: transfers
             columns:
@@ -160,6 +227,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+  - changeSet:
+      id: fk-transfers-from-card
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_transfers_from_card
+      changes:
         - addForeignKeyConstraint:
             baseTableName: transfers
             baseColumnNames: from_card_id
@@ -167,6 +243,15 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_transfers_from_card
 
+  - changeSet:
+      id: fk-transfers-to-card
+      author: willhelmatiq
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_transfers_to_card
+      changes:
         - addForeignKeyConstraint:
             baseTableName: transfers
             baseColumnNames: to_card_id
