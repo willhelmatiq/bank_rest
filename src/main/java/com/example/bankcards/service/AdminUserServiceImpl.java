@@ -2,7 +2,9 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.UserResponseDto;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.ConflictException;
+import com.example.bankcards.exception.ForbiddenException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,20 +31,20 @@ public class AdminUserServiceImpl implements AdminUserService {
     public void block(Long userId, Authentication authentication) {
         User currentAdmin = userRepository
                 .findByUsername(authentication.getName())
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         User targetUser = getUser(userId);
 
         if (!targetUser.isEnabled()) {
-            throw new BusinessException("User already blocked");
+            throw new ConflictException("User already blocked");
         }
 
         if (currentAdmin.getId().equals(targetUser.getId())) {
-            throw new BusinessException("Admin cannot block himself");
+            throw new ForbiddenException("Admin cannot block himself");
         }
 
         if (targetUser.getRole().getTitle().equals("ADMIN")) {
-            throw new BusinessException("Admin cannot block another admin");
+            throw new ForbiddenException("Admin cannot block another admin");
         }
 
         targetUser.setEnabled(false);
@@ -53,20 +55,20 @@ public class AdminUserServiceImpl implements AdminUserService {
     public void unblock(Long userId, Authentication authentication) {
         User currentAdmin = userRepository
                 .findByUsername(authentication.getName())
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         User targetUser = getUser(userId);
 
         if (targetUser.isEnabled()) {
-            throw new BusinessException("User already active");
+            throw new ConflictException("User already active");
         }
 
         if (currentAdmin.getId().equals(targetUser.getId())) {
-            throw new BusinessException("Admin cannot unblock himself");
+            throw new ForbiddenException("Admin cannot unblock himself");
         }
 
         if (targetUser.getRole().getTitle().equals("ADMIN")) {
-            throw new BusinessException("Admin cannot unblock another admin");
+            throw new ForbiddenException("Admin cannot unblock another admin");
         }
 
         targetUser.setEnabled(true);
@@ -74,7 +76,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     private User getUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     private UserResponseDto mapToDto(User user) {

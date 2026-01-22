@@ -6,7 +6,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.enums.CardStatusCode;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.CardStatusRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -31,7 +31,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     public CardResponseDto create(CreateCardRequestDto dto) {
 
         User user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         CardStatus activeStatus = cardStatusRepository
                 .findByStatusCode(CardStatusCode.ACTIVE)
@@ -94,7 +94,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     private Card getCard(Long cardId) {
         return cardRepository
                 .findById(cardId)
-                .orElseThrow(() -> new BusinessException("Card not found"));
+                .orElseThrow(() -> new NotFoundException("Card not found"));
     }
 
     private CardResponseDto mapToDto(Card card) {
