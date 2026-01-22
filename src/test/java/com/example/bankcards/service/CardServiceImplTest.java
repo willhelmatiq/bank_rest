@@ -5,7 +5,9 @@ import com.example.bankcards.dto.CardResponseDto;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.enums.CardStatusCode;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.ConflictException;
+import com.example.bankcards.exception.ForbiddenException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.CardStatusRepository;
 import com.example.bankcards.util.TestDataFactory;
@@ -51,7 +53,6 @@ class CardServiceImplTest {
 
         Card card1 = TestDataFactory.card(1L, "user1", CardStatusCode.ACTIVE, BigDecimal.TEN);
         Card card2 = TestDataFactory.card(2L, "user1", CardStatusCode.BLOCKED, BigDecimal.ONE);
-        Card card3 = TestDataFactory.card(3L, "user1", CardStatusCode.CLOSED, BigDecimal.ZERO);
 
         Page<Card> page = new PageImpl<>(
                 List.of(card1, card2),
@@ -59,8 +60,11 @@ class CardServiceImplTest {
                 2
         );
 
-        when(cardRepository.findAllByUser_UsernameAndStatus_StatusCodeNot(eq("user1"), eq(CardStatusCode.CLOSED), any(Pageable.class)))
-                .thenReturn(page);
+        when(cardRepository.findAllByUser_UsernameAndStatus_StatusCodeNot(
+                eq("user1"),
+                eq(CardStatusCode.CLOSED),
+                any(Pageable.class)
+        )).thenReturn(page);
 
         Page<CardResponseDto> result =
                 cardService.getUserCards(auth, PageRequest.of(0, 10));
@@ -68,6 +72,12 @@ class CardServiceImplTest {
         assertEquals(2, result.getTotalElements());
         assertEquals(CardStatusCode.ACTIVE, result.getContent().get(0).status());
         assertEquals(CardStatusCode.BLOCKED, result.getContent().get(1).status());
+
+        verify(cardRepository).findAllByUser_UsernameAndStatus_StatusCodeNot(
+                eq("user1"),
+                eq(CardStatusCode.CLOSED),
+                any(Pageable.class)
+        );
     }
 
     // ---------- GET USER CARDS BY STATUS ----------
@@ -104,8 +114,8 @@ class CardServiceImplTest {
     void getUserCardsByStatus_closed_throwsException() {
         Authentication auth = mock(Authentication.class);
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ForbiddenException ex = assertThrows(
+                ForbiddenException.class,
                 () -> cardService.getUserCardsByStatus(
                         auth,
                         CardStatusCode.CLOSED,
@@ -146,8 +156,8 @@ class CardServiceImplTest {
         when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.empty());
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        NotFoundException ex = assertThrows(
+                NotFoundException.class,
                 () -> cardService.getBalance(1L, auth)
         );
 
@@ -194,8 +204,8 @@ class CardServiceImplTest {
                 CardStatusCode.CLOSED
         )).thenReturn(Optional.of(card));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> cardService.requestBlock(1L, auth)
         );
 
@@ -222,8 +232,8 @@ class CardServiceImplTest {
                 CardStatusCode.CLOSED
         )).thenReturn(Optional.of(card));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> cardService.requestBlock(1L, auth)
         );
 
@@ -244,8 +254,8 @@ class CardServiceImplTest {
         when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.of(card));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> cardService.requestBlock(1L, auth)
         );
 
@@ -263,8 +273,8 @@ class CardServiceImplTest {
         when(cardRepository.findByIdAndUser_UsernameAndStatus_StatusCodeNot(1L, "user1", CardStatusCode.CLOSED))
                 .thenReturn(Optional.of(card));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> cardService.requestBlock(1L, auth)
         );
 

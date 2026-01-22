@@ -1,7 +1,8 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.JwtResponseDto;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.ForbiddenException;
+import com.example.bankcards.exception.UnauthorizedException;
 import com.example.bankcards.security.JwtAuthenticationFilter;
 import com.example.bankcards.service.AuthService;
 import org.junit.jupiter.api.MediaType;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -62,9 +62,8 @@ class AuthControllerTest {
     void login_invalidCredentials() throws Exception {
 
         when(authService.login(any()))
-                .thenThrow(new BusinessException(
-                        "Invalid username or password",
-                        HttpStatus.UNAUTHORIZED
+                .thenThrow(new UnauthorizedException(
+                        "Invalid username or password"
                 ));
 
         mockMvc.perform(post("/api/auth/login")
@@ -85,9 +84,8 @@ class AuthControllerTest {
     void login_userBlocked() throws Exception {
 
         when(authService.login(any()))
-                .thenThrow(new BusinessException(
-                        "User has been blocked",
-                        HttpStatus.FORBIDDEN
+                .thenThrow(new ForbiddenException(
+                        "User has been blocked"
                 ));
 
         mockMvc.perform(post("/api/auth/login")

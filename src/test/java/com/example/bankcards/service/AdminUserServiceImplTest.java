@@ -3,7 +3,8 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.UserResponseDto;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.ConflictException;
+import com.example.bankcards.exception.ForbiddenException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.TestDataFactory;
 import org.junit.jupiter.api.Test;
@@ -90,8 +91,8 @@ class AdminUserServiceImplTest {
         when(userRepository.findById(2L))
                 .thenReturn(Optional.of(user));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> adminUserService.block(2L, auth)
         );
 
@@ -112,8 +113,8 @@ class AdminUserServiceImplTest {
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(admin));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ForbiddenException ex = assertThrows(
+                ForbiddenException.class,
                 () -> adminUserService.block(1L, auth)
         );
 
@@ -135,8 +136,8 @@ class AdminUserServiceImplTest {
         when(userRepository.findById(2L))
                 .thenReturn(Optional.of(admin2));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ForbiddenException ex = assertThrows(
+                ForbiddenException.class,
                 () -> adminUserService.block(2L, auth)
         );
 
@@ -180,8 +181,8 @@ class AdminUserServiceImplTest {
         when(userRepository.findById(2L))
                 .thenReturn(Optional.of(user));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> adminUserService.unblock(2L, auth)
         );
 
@@ -202,8 +203,8 @@ class AdminUserServiceImplTest {
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(admin));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ForbiddenException ex = assertThrows(
+                ForbiddenException.class,
                 () -> adminUserService.unblock(1L, auth)
         );
 
@@ -225,8 +226,8 @@ class AdminUserServiceImplTest {
         when(userRepository.findById(2L))
                 .thenReturn(Optional.of(admin2));
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ForbiddenException ex = assertThrows(
+                ForbiddenException.class,
                 () -> adminUserService.unblock(2L, auth)
         );
 

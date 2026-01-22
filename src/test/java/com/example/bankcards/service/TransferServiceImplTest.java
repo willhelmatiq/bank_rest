@@ -4,7 +4,9 @@ import com.example.bankcards.dto.TransferRequestDto;
 import com.example.bankcards.dto.TransferResponseDto;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.enums.CardStatusCode;
-import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.BadRequestException;
+import com.example.bankcards.exception.ConflictException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.TransferRepository;
 import com.example.bankcards.util.TestDataFactory;
@@ -74,8 +76,8 @@ class TransferServiceImplTest {
         TransferRequestDto dto =
                 new TransferRequestDto(1L, 1L, BigDecimal.TEN);
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        BadRequestException ex = assertThrows(
+                BadRequestException.class,
                 () -> transferService.transfer(dto, auth)
         );
 
@@ -94,8 +96,8 @@ class TransferServiceImplTest {
         TransferRequestDto dto =
                 new TransferRequestDto(1L, 2L, BigDecimal.TEN);
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        NotFoundException ex = assertThrows(
+                NotFoundException.class,
                 () -> transferService.transfer(dto, auth)
         );
 
@@ -120,8 +122,8 @@ class TransferServiceImplTest {
         TransferRequestDto dto =
                 new TransferRequestDto(1L, 2L, BigDecimal.ONE);
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        NotFoundException ex = assertThrows(
+                NotFoundException.class,
                 () -> transferService.transfer(dto, auth)
         );
 
@@ -149,8 +151,8 @@ class TransferServiceImplTest {
         TransferRequestDto dto =
                 new TransferRequestDto(1L, 2L, BigDecimal.ONE);
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> transferService.transfer(dto, auth)
         );
 
@@ -178,8 +180,8 @@ class TransferServiceImplTest {
         TransferRequestDto dto =
                 new TransferRequestDto(1L, 2L, BigDecimal.TEN);
 
-        BusinessException ex = assertThrows(
-                BusinessException.class,
+        ConflictException ex = assertThrows(
+                ConflictException.class,
                 () -> transferService.transfer(dto, auth)
         );
 
